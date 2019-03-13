@@ -6,13 +6,13 @@ use Yii;
 /**
  * {@inheritdoc}
  */
-class Admin extends \common\models\User
+class Member extends \common\models\User
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%memeber}}';
+        return '{{%member}}';
     }
 }
