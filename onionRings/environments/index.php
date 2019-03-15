@@ -34,7 +34,7 @@ return [
         'setWritable' => [
             'backend/runtime',
             'backend/web/assets',
-            'console/runtime',
+            'api/runtime',
             'frontend/runtime',
             'frontend/web/assets',
         ],
@@ -53,7 +53,7 @@ return [
         'setWritable' => [
             'backend/runtime',
             'backend/web/assets',
-            'console/runtime',
+            'api/runtime',
             'frontend/runtime',
             'frontend/web/assets',
         ],
