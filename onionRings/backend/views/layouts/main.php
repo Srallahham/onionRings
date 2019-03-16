@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use backend\assets\AppAsset;
@@ -37,6 +38,14 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => 'Admins', 'url' => ['/admin/index']],
+        ['label' => 'Albums', 'url' => ['/album/index']],
+        ['label' => 'Categories', 'url' => ['/category/index']],
+        ['label' => 'Comments', 'url' => ['/comment/index']],
+        ['label' => 'Ingredients', 'url' => ['/ingredient/index']],
+        ['label' => 'Members', 'url' => ['/member/index']],
+        ['label' => 'Recipes', 'url' => ['/recipe/index']],
+        ['label' => 'Unit', 'url' => ['/unit/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
