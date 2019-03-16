@@ -1,5 +1,5 @@
 <?php
-namespace frontend\models;
+namespace backend\models;
 
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
@@ -15,6 +15,6 @@ class ResetPasswordForm  extends \common\models\ResetPasswordForm
      */
     protected static function getUserClass()
     {
-        return Member::class;
+        return Admin::class;
     }
 }

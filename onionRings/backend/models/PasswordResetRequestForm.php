@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\models;
+namespace backend\models;
 
 use Yii;
 use yii\base\Model;
@@ -15,6 +15,6 @@ class PasswordResetRequestForm extends \common\models\PasswordResetRequestForm
      */
     protected static function getUserClass()
     {
-        return Member::class;
+        return Admin::class;
     }
 }

@@ -1,20 +1,20 @@
 <?php
-namespace frontend\models;
 
-use yii\base\InvalidArgumentException;
+namespace backend\models;
+
 use yii\base\Model;
 use common\models\User;
 
 /**
  * {@inheritdoc}
  */
-class ResetPasswordForm  extends \common\models\ResetPasswordForm
+class SignupForm  extends \common\models\SignupForm
 {
     /**
      * {@inheritdoc}
      */
     protected static function getUserClass()
     {
-        return Member::class;
+        return Admin::class;
     }
 }

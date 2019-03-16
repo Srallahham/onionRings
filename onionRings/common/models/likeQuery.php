@@ -7,7 +7,7 @@ namespace common\models;
  *
  * @see Like
  */
-class likeQuery extends \yii\db\ActiveQuery
+class LikeQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {

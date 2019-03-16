@@ -67,10 +67,10 @@ class Like extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return likeQuery the active query used by this AR class.
+     * @return LikeQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new likeQuery(get_called_class());
+        return new LikeQuery(get_called_class());
     }
 }
