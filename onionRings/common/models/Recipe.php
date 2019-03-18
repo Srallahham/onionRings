@@ -3,17 +3,19 @@
 namespace common\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "recipe".
  *
  * @property int $recipe_id
  * @property string $recipe_title
- * @property int $recipe_picture
+ * @property string $recipe_picture
  * @property string $recipe_date
  * @property int $recipe_owner
  * @property string $recipe_preparation
  * @property int $recipe_category
+ * @property int $recipe_album
  *
  * @property Album[] $albums
  * @property Comment[] $comments
@@ -21,13 +23,17 @@ use Yii;
  * @property Rates[] $rates
  * @property Category $recipeCategory
  * @property Member $recipeOwner
- * @property Picture $recipePicture
+ * @property Album $recipeAlbum
  * @property RecipeIngredient[] $recipeIngredients
  */
 class Recipe extends \yii\db\ActiveRecord
 {
 
+    /**
+     * @var UploadedFile|Null file attribute
+     */
     public $file;
+
     /**
      * {@inheritdoc}
      */
@@ -42,16 +48,17 @@ class Recipe extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['file'], 'file'],
+            [['file'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
+            [['file'], 'required', 'on' => ['create']],
             [['recipe_title', 'recipe_date', 'recipe_owner', 'recipe_category'], 'required'],
-            [['recipe_picture', 'recipe_owner', 'recipe_category'], 'integer'],
             [['recipe_date'], 'safe'],
+            [['recipe_owner', 'recipe_category', 'recipe_album'], 'integer'],
             [['recipe_preparation'], 'string'],
             [['recipe_title'], 'string', 'max' => 45],
-            [['recipe_title'], 'unique'],
+            [['recipe_picture'], 'string', 'max' => 255],
             [['recipe_category'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['recipe_category' => 'category_id']],
             [['recipe_owner'], 'exist', 'skipOnError' => true, 'targetClass' => Member::className(), 'targetAttribute' => ['recipe_owner' => 'id']],
-            [['recipe_picture'], 'exist', 'skipOnError' => true, 'targetClass' => Picture::className(), 'targetAttribute' => ['recipe_picture' => 'picture_id']],
+            [['recipe_album'], 'exist', 'skipOnError' => true, 'targetClass' => Album::className(), 'targetAttribute' => ['recipe_album' => 'album_id']],
         ];
     }
 
@@ -68,7 +75,7 @@ class Recipe extends \yii\db\ActiveRecord
             'recipe_owner' => 'Recipe Owner',
             'recipe_preparation' => 'Recipe Preparation',
             'recipe_category' => 'Recipe Category',
-            'file' => 'Upload A Picture',
+            'recipe_album' => 'Recipe Album',
         ];
     }
 
@@ -123,9 +130,9 @@ class Recipe extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRecipePicture()
+    public function getRecipeAlbum()
     {
-        return $this->hasOne(Picture::className(), ['picture_id' => 'recipe_picture']);
+        return $this->hasOne(Album::className(), ['album_id' => 'recipe_album']);
     }
 
     /**
@@ -143,5 +150,30 @@ class Recipe extends \yii\db\ActiveRecord
     public static function find()
     {
         return new RecipeQuery(get_called_class());
+    }
+
+    public function upload()
+    {
+
+        if ($this->validate()) {
+            $fileName = uniqid(time(), true) . '.' . $this->file->extension;
+            $uploadPath = Yii::getAlias('@uploads') . '/' . $fileName;
+            if ($this->file->saveAs($uploadPath)) {
+                $this->recipe_picture = $fileName;
+                return true;
+
+            }
+        }
+        return false;
+    }
+
+
+    public function beforeDelete()
+    {
+        $file = Yii::getAlias('@uploads') . '/' . $this->recipe_picture;
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+        return parent::beforeDelete();
     }
 }
