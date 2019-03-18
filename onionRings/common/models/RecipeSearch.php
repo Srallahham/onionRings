@@ -17,7 +17,7 @@ class RecipeSearch extends Recipe
     public function rules()
     {
         return [
-            [['recipe_id', 'recipe_picture', 'recipe_owner', 'recipe_category'], 'integer'],
+            [['recipe_id', 'recipe_picture', 'recipe_owner', 'recipe_category', 'recipe_album'], 'integer'],
             [['recipe_title', 'recipe_date', 'recipe_preparation'], 'safe'],
         ];
     }
@@ -63,6 +63,7 @@ class RecipeSearch extends Recipe
             'recipe_date' => $this->recipe_date,
             'recipe_owner' => $this->recipe_owner,
             'recipe_category' => $this->recipe_category,
+            'recipe_album' => $this->recipe_album,
         ]);
 
         $query->andFilterWhere(['like', 'recipe_title', $this->recipe_title])

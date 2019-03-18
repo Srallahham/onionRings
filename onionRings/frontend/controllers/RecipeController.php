@@ -85,7 +85,7 @@ class RecipeController extends Controller
             // save the picture to the db.
             $picture->picture_title = $fileName;
             $picture->picture_path  = $filePath;
-            $picture->picture_album = $model->recipe_album;
+            $picture->picture_album = 1;
             $picture->save();
 
             // save the main model

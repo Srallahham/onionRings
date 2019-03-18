@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'recipe_owner',
             //'recipe_preparation:ntext',
             //'recipe_category',
+            //'recipe_album',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
