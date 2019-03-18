@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $album_id
  * @property int $album_recipe
+ * @property string $album_name
  *
  * @property Recipe $albumRecipe
  * @property Picture[] $pictures
@@ -30,6 +31,8 @@ class Album extends \yii\db\ActiveRecord
     {
         return [
             [['album_recipe'], 'integer'],
+            [['album_name'], 'required'],
+            [['album_name'], 'string', 'max' => 15],
             [['album_recipe'], 'exist', 'skipOnError' => true, 'targetClass' => Recipe::className(), 'targetAttribute' => ['album_recipe' => 'recipe_id']],
         ];
     }
@@ -42,6 +45,7 @@ class Album extends \yii\db\ActiveRecord
         return [
             'album_id' => 'Album ID',
             'album_recipe' => 'Album Recipe',
+            'album_name' => 'Album Name',
         ];
     }
 
