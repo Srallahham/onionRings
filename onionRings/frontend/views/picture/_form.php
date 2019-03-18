@@ -14,14 +14,16 @@ use yii\helpers\ArrayHelper;
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-    <?= $form->field($model, 'picture_title')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'file')->fileInput(); ?>
+    <?= $form->field($model, 'files[]')->fileInput(['multiple' => true, 'accept' => 'image/*']); ?>
 
     <?= $form->field($model, 'picture_album')->DropDownList(
           ArrayHelper::map(Album::find()->all(), 'album_id', 'album_name'),
           ['prompt' => 'Select Album']
       ) ?>
+
+    <div class="form-group">
+        <?= Html::a('Create New Album', ['../album/create'], ['class' => 'btn btn-primary']) ?>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

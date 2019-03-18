@@ -20,7 +20,7 @@ class Picture extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
 
-     public $file;
+     public $files = array();
 
     public static function tableName()
     {
@@ -33,7 +33,7 @@ class Picture extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['file'], 'file'],
+            [['files'], 'file', 'maxFiles' => 10],
             [['picture_path', 'picture_album'], 'required'],
             [['picture_album'], 'integer'],
             [['picture_title', 'picture_path'], 'string', 'max' => 45],
@@ -51,7 +51,7 @@ class Picture extends \yii\db\ActiveRecord
             'picture_title' => 'Picture Title',
             'picture_path' => 'Picture Path',
             'picture_album' => 'Picture Album',
-            'file' => 'Image'
+            'files' => 'Image'
         ];
     }
 

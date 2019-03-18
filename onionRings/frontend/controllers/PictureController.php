@@ -68,18 +68,22 @@ class PictureController extends Controller
         $model = new Picture();
 
         if ($model->load(Yii::$app->request->post())) {
+
             // get the instance of the uploaded file.
+            $model->files = UploadedFile::getInstances($model, 'files');
+            foreach ($model->files as $file) {
+                $picture = new Picture();
+                $fileName = $file->name /*$model->file->name*/;
+                /*$model->file*/ $file->saveAs('uploads/' . $fileName . '.' . /*$model->file*/ $file->extension);
 
-            $model->file = UploadedFile::getInstance($model, 'file');
-            $fileName = $model->file->name;
-            $model->file->saveAs('uploads/' . $fileName . '.' . $model->file->extension);
-
-            // save the path in the db.
-
-            $model->picture_path = 'uploads/' . $fileName . '.' . $model->file->extension;
-
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->picture_id]);
+                // save the path in the db.
+                $picture->picture_title = $fileName . '.' . $file->extension;
+                $picture->picture_path  = 'uploads/' . $fileName . '.' . /*$model->file*/ $file->extension;
+                $picture->picture_album = $model->picture_album;
+                $picture->save();
+            }
+            return $this->redirect('create');
+            //return $this->redirect(['view', 'id' => $model->picture_id]);
         }
 
         return $this->render('create', [
