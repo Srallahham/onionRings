@@ -8,6 +8,9 @@ use common\models\RecipeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\Picture;
+use yii\web\UploadedFile;
+use yii\db\Expression;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -66,12 +69,35 @@ class RecipeController extends Controller
     {
         $model = new Recipe();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+            // get the instance of the uploaded file.
+            $model->file = UploadedFile::getInstance($model, 'file');
+
+            $picture = new Picture();
+            $fileName = $model->file->name;
+            $filePath = 'uploads/' . $fileName . '.' . $model->file->extension;
+            $model->file->saveAs($filePath);
+
+            $model->recipe_owner = (yii::$app->user->isGuest)? 1 : yii::$app->user->identity->id;
+            $model->recipe_date  = new Expression('now()');
+
+            // save the picture to the db.
+            $picture->picture_title = $fileName;
+            $picture->picture_path  = $filePath;
+            $picture->picture_album = $model->recipe_album;
+            $picture->save();
+
+            // save the main model
+            $model->recipe_picture = $picture->picture_id;
+            $model->save();
+
             return $this->redirect(['view', 'id' => $model->recipe_id]);
         }
-
+        $data = Picture::find()->all();
         return $this->render('create', [
             'model' => $model,
+            'pictures' => $data,
         ]);
     }
 

@@ -69,16 +69,16 @@ class PictureController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
-            // get the instance of the uploaded file.
+            // get the instances of the uploaded files.
             $model->files = UploadedFile::getInstances($model, 'files');
             foreach ($model->files as $file) {
                 $picture = new Picture();
-                $fileName = $file->name /*$model->file->name*/;
-                /*$model->file*/ $file->saveAs('uploads/' . $fileName . '.' . /*$model->file*/ $file->extension);
+                $fileName = $file->name;
+                $file->saveAs('uploads/' . $fileName . '.' . $file->extension);
 
-                // save the path in the db.
-                $picture->picture_title = $fileName . '.' . $file->extension;
-                $picture->picture_path  = 'uploads/' . $fileName . '.' . /*$model->file*/ $file->extension;
+                // save the paths in the db.
+                $picture->picture_title = $fileName;
+                $picture->picture_path  = 'uploads/' . $fileName . '.' . $file->extension;
                 $picture->picture_album = $model->picture_album;
                 $picture->save();
             }

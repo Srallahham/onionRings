@@ -18,3 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+<div class="row">
+    <?php foreach($pictures as $picture) {
+    ?>
+    <div class="col-md-3">
+        <div class="card">
+            <img src="<?= Yii::getAlias('@web').'/'.$picture->picture_path; ?>" class="card-mg-top" width="100%">
+            <div class="card-body">
+                <h5 class="card-title"><?= $picture->picture_title; ?></h5>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+</div>

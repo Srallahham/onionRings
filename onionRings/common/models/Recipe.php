@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $recipe_id
  * @property string $recipe_title
+ * @property int $recipe_picture
  * @property string $recipe_date
  * @property int $recipe_owner
  * @property string $recipe_preparation
@@ -20,10 +21,13 @@ use Yii;
  * @property Rates[] $rates
  * @property Category $recipeCategory
  * @property Member $recipeOwner
+ * @property Picture $recipePicture
  * @property RecipeIngredient[] $recipeIngredients
  */
 class Recipe extends \yii\db\ActiveRecord
 {
+
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -38,14 +42,16 @@ class Recipe extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['file'], 'file'],
             [['recipe_title', 'recipe_date', 'recipe_owner', 'recipe_category'], 'required'],
+            [['recipe_picture', 'recipe_owner', 'recipe_category'], 'integer'],
             [['recipe_date'], 'safe'],
-            [['recipe_owner', 'recipe_category'], 'integer'],
             [['recipe_preparation'], 'string'],
             [['recipe_title'], 'string', 'max' => 45],
             [['recipe_title'], 'unique'],
             [['recipe_category'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['recipe_category' => 'category_id']],
             [['recipe_owner'], 'exist', 'skipOnError' => true, 'targetClass' => Member::className(), 'targetAttribute' => ['recipe_owner' => 'id']],
+            [['recipe_picture'], 'exist', 'skipOnError' => true, 'targetClass' => Picture::className(), 'targetAttribute' => ['recipe_picture' => 'picture_id']],
         ];
     }
 
@@ -57,10 +63,12 @@ class Recipe extends \yii\db\ActiveRecord
         return [
             'recipe_id' => 'Recipe ID',
             'recipe_title' => 'Recipe Title',
+            'recipe_picture' => 'Recipe Picture',
             'recipe_date' => 'Recipe Date',
             'recipe_owner' => 'Recipe Owner',
             'recipe_preparation' => 'Recipe Preparation',
             'recipe_category' => 'Recipe Category',
+            'file' => 'Upload A Picture',
         ];
     }
 
@@ -110,6 +118,14 @@ class Recipe extends \yii\db\ActiveRecord
     public function getRecipeOwner()
     {
         return $this->hasOne(Member::className(), ['id' => 'recipe_owner']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRecipePicture()
+    {
+        return $this->hasOne(Picture::className(), ['picture_id' => 'recipe_picture']);
     }
 
     /**

@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'recipe_id',
             'recipe_title',
+            'recipe_picture',
             'recipe_date',
             'recipe_owner',
             'recipe_preparation:ntext',

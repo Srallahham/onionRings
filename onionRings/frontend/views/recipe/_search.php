@@ -19,11 +19,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'recipe_title') ?>
 
+    <?= $form->field($model, 'recipe_picture') ?>
+
     <?= $form->field($model, 'recipe_date') ?>
 
     <?= $form->field($model, 'recipe_owner') ?>
 
-    <?= $form->field($model, 'recipe_preparation') ?>
+    <?php // echo $form->field($model, 'recipe_preparation') ?>
 
     <?php // echo $form->field($model, 'recipe_category') ?>
 
