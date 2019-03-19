@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use yii\db\Expression;
 use common\models\Ingredient;
 use common\models\RecipeIngredient;
+use yii\db\Query;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -48,7 +49,7 @@ class RecipeController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-
+    
     /**
      * Displays a single Recipe model.
      * @param integer $id
@@ -73,8 +74,6 @@ class RecipeController extends Controller
         $model->scenario = 'create';
 
         $data = Ingredient::find()->all();
-
-
 
         if ($model->load(Yii::$app->request->post())) {
 
