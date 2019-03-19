@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use common\models\Picture;
 use yii\web\UploadedFile;
 use yii\db\Expression;
+use common\models\Ingredient;
+use common\models\RecipeIngredient;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -70,17 +72,35 @@ class RecipeController extends Controller
         $model = new Recipe();
         $model->scenario = 'create';
 
+        $data = Ingredient::find()->all();
+
+
+
         if ($model->load(Yii::$app->request->post())) {
+
             // get the instance of the uploaded file.
             $model->file = UploadedFile::getInstance($model, 'file');
             $model->recipe_owner = yii::$app->user->identity->getId();
             $model->recipe_date = new Expression('now()');
             if ($model->upload() && $model->save(false)) {
+
+              $ingredientList = $_POST['Recipe']['ingredients'];
+              foreach ($ingredientList as $ingredient) {
+
+                $row = new RecipeIngredient();
+
+                $row->recipe_id = $model->recipe_id;
+                $row->ingredient_id = $ingredient;
+                $row->ingredient_unit = 5;
+                $row->save();
+              }
+
                 return $this->redirect(['view', 'id' => $model->recipe_id]);
             }
         }
         return $this->render('create', [
-            'model' => $model
+            'model' => $model,
+            'data' => $data
         ]);
     }
 

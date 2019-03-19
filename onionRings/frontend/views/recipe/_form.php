@@ -4,6 +4,10 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\Album;
+use common\models\Unit;
+use common\models\Category;
+use yii\helpers\Chtml;
+use common\models\Ingredient;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Recipe */
@@ -24,11 +28,19 @@ use common\models\Album;
     <?php if ($model->isNewRecord): ?>
         <?= $form->field($model, 'file')->fileInput() ?>
     <?php endif; ?>
+
+    <!--// show all ingredients -->
+    <div class="form-group ingredients">
+      <?= $form->field($model, 'ingredients')->CheckBoxList(
+          ArrayHelper::map(Ingredient::find()->all(), 'ingredient_id', 'ingredient_name')
+      ) ?>
+    </div>
+
     <?= $form->field($model, 'recipe_preparation')->textarea(['rows' => 6]) ?>
 
 
     <?= $form->field($model, 'recipe_category')->DropDownList(
-        ArrayHelper::map(\common\models\Category::find()->all(), 'category_id', 'category_name'),
+        ArrayHelper::map(Category::find()->all(), 'category_id', 'category_name'),
         ['prompt' => 'Select Category']
     ) ?>
 

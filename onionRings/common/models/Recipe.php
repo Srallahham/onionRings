@@ -32,7 +32,11 @@ class Recipe extends \yii\db\ActiveRecord
     /**
      * @var UploadedFile|Null file attribute
      */
+    // Recipe Picture
     public $file;
+
+    // Ingredients
+    public $ingredients;
 
     /**
      * {@inheritdoc}
