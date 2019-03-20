@@ -6,6 +6,7 @@ use Yii;
 use yii\web\UploadedFile;
 use common\models\Category;
 use common\models\Member;
+use common\models\Picture;
 
 /**
  * This is the model class for table "recipe".
@@ -163,9 +164,17 @@ class Recipe extends \yii\db\ActiveRecord
 
         if ($this->validate()) {
             $fileName = uniqid(time(), true) . '.' . $this->file->extension;
-            $uploadPath = Yii::getAlias('@uploads') . '/' . $fileName;
+            $uploadPath = 'uploads/' . $fileName;
             if ($this->file->saveAs($uploadPath)) {
                 $this->recipe_picture = $fileName;
+
+                // save the paths in the db.
+                $picture = new Picture();
+                $picture->picture_title = $fileName;
+                $picture->picture_path  = $uploadPath;
+                $picture->picture_album = $this->recipe_album;
+                $picture->save();
+
                 return true;
 
             }

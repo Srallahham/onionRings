@@ -67,7 +67,7 @@ class AlbumController extends Controller
         $model = new Album();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->album_id]);
+            return $this->redirect(['picture/create']);
         }
 
         return $this->render('create', [

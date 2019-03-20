@@ -89,7 +89,7 @@ class RecipeController extends Controller
 
             // get the instance of the uploaded file.
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->recipe_owner = yii::$app->user->identity->getId();
+            $model->recipe_owner = (yii::$app->user->isGuest)? 1 : yii::$app->user->identity->getId();
             $model->recipe_date = new Expression('now()');
             if ($model->upload() && $model->save(false)) {
 

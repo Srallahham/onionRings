@@ -16,18 +16,18 @@ $this->params['breadcrumbs'][] = $this->title;
       <h1><?= $this->title ?></h1>
 </div>
 
-<div class="container recipes">
+<div class="row">
   <?php
     foreach($models as $model) {
   ?>
 
-  <div class="row">
+    <div class="col-md-4">
       <div class="thumbnail">
         <img src="<?=Yii::getAlias('@web') . '/' . 'uploads/' . $model->recipe_picture ?>"
           class="figure-img img-fluid img-rounded"/>
-        <div class="caption"> <?= $model->recipe_title ?> </div>
+        <div class="caption"> <?= $model->recipe_title ?>, <?= $model->getCategoryName($model->recipe_category) ?> </div>
       </div>
-  </div>
+    </div>
 
   <?php } ?>
 </div>
