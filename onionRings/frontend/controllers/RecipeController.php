@@ -49,7 +49,17 @@ class RecipeController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
+    public function actionCategory($id)
+    {
+      $searchModel = new RecipeSearch();
+      $dataProvider = $searchModel->searchCateogry($id, Yii::$app->request->queryParams);
+      return $this->render('category', [
+          'searchModel' => $searchModel,
+          'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Displays a single Recipe model.
      * @param integer $id

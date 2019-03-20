@@ -4,6 +4,8 @@ namespace common\models;
 
 use Yii;
 use yii\web\UploadedFile;
+use common\models\Category;
+use common\models\Member;
 
 /**
  * This is the model class for table "recipe".
@@ -179,5 +181,19 @@ class Recipe extends \yii\db\ActiveRecord
             @unlink($file);
         }
         return parent::beforeDelete();
+    }
+
+    public function getCategoryName($id) {
+
+      $data = Category::find($id)->one();
+
+      return $data->category_name;
+    }
+
+    public function getOwnerName($id) {
+
+      $data = Member::find($id)->one();
+
+      return $data->username;
     }
 }

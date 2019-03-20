@@ -71,4 +71,39 @@ class RecipeSearch extends Recipe
 
         return $dataProvider;
     }
+
+    public function searchCateogry($id, $params)
+    {
+        $query = Recipe::find()
+          ->where('recipe_category = :id', [':id' => $id]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'recipe_id' => $this->recipe_id,
+            'recipe_picture' => $this->recipe_picture,
+            'recipe_date' => $this->recipe_date,
+            'recipe_owner' => $this->recipe_owner,
+            'recipe_category' => $this->recipe_category,
+            'recipe_album' => $this->recipe_album,
+        ]);
+
+        $query->andFilterWhere(['like', 'recipe_title', $this->recipe_title])
+            ->andFilterWhere(['like', 'recipe_preparation', $this->recipe_preparation]);
+
+        return $dataProvider;
+    }
 }
