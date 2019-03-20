@@ -1,40 +1,33 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use common\models\Recipe;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\RecipeSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+
+// get the models from dataProvider.
+$models = $dataProvider->getModels();
 
 $this->title = 'Recipes';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
-<div class="recipe-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<div class="recipe_category">
+      <h1><?= $this->title ?></h1>
+</div>
 
-    <p>
-        <?= Html::a('Create Recipe', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+<div class="container recipes">
+  <?php
+    foreach($models as $model) {
+  ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+  <div class="row">
+      <div class="thumbnail">
+        <img src="<?=Yii::getAlias('@web') . '/' . 'uploads/' . $model->recipe_picture ?>"
+          class="figure-img img-fluid img-rounded"/>
+        <div class="caption"> <?= $model->recipe_title ?> </div>
+      </div>
+  </div>
 
-            'recipe_id',
-            'recipe_title',
-            'recipe_picture',
-            'recipe_date',
-            'recipe_owner',
-            //'recipe_preparation:ntext',
-            //'recipe_category',
-            //'recipe_album',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+  <?php } ?>
 </div>
