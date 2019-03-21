@@ -1,7 +1,11 @@
 <?php
 
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\Url;
+use common\models\Comment;
+use common\models\RecipeIngredient;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Recipe */
@@ -10,6 +14,11 @@ $this->title = $model->recipe_title;
 $this->params['breadcrumbs'][] = ['label' => 'Recipes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
+$comment = new Comment();
+$comments = $model->getRecipeComments($model->recipe_id);
+$ingredients = $model->getIngredients($model->recipe_id);
+
 ?>
 <div class="recipe-view">
 
@@ -36,11 +45,102 @@ $this->params['breadcrumbs'][] = $this->title;
                 class="figure-img img-fluid img-rounded" width="100%"/>
               <div class="caption"> <?= $model->recipe_date ?> </div>
             </div>
-        </div>
+
+            <div class="row">
+              <?php
+                $album = $model->getAlbum($model->recipe_album);
+                foreach($album as $picture) {
+              ?>
+              <div class="col-md-4">
+                  <div class="thumbnail">
+                      <a href="<?= Url::toRoute(['recipe/view', 'id' => $model->recipe_id]) ?>">
+                          <img src="<?= Yii::getAlias('@web') . '/' . $picture->picture_path ?>"
+                               class="figure-img img-fluid img-rounded"/>
+                      </a>
+                  </div>
+              </div>
+              <?php } ?>
+            </div>
+          <?php foreach($ingredients as $ingredient) { ?>
+            <div class="row">
+              <div class="col-md-4">
+                <div>
+                    <?= RecipeIngredient::getIngredientName($ingredient->ingredient_id) ?>
+                </div>
+              </div>
+            </div>
+          <?php } ?>
         <div class="row">
+          <div class="col-md-4">
             <div>
                 <?= $model->recipe_preparation ?>
             </div>
+          </div>
         </div>
 
+        <?php
+        // get the comments
+        foreach ($comments as $comment) { ?>
+          <div class="row">
+            <div class="col-md-1">
+              <div class="panel panel-body rounded" width="100%">
+                <?=$model->getOwnerName($comment->comment_owner); ?>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="panel panel-body rounded" width="100%">
+                <?= $comment->comment ?>
+              </div>
+            </div>
+          </div>
+
+        <?php } ?>
+        <?php
+          $form = ActiveForm::begin([
+            'action' => ['ajax-comment'],
+            'options' => [
+              'class' => 'comment-form'
+            ]
+          ]);
+        ?>
+            <?= $form->field($comment, 'comment')->label(false); ?>
+            <?= $form->field($comment, 'comment_owner')->hiddenInput(['value'=>$model->recipe_owner])->label(false); ?>
+            <?= $form->field($comment, 'comment_recipe')->hiddenInput(['value'=>$model->recipe_id])->label(false); ?>
+
+            <?= Html::SubmitButton("Comment", ['class' => "btn"]); ?>
+        <?php ActiveForm::end(); ?>
+
 </div>
+
+<?php $script = <<< JS
+
+jQuery(document).ready(function($) {
+  $(".comment-form").on('submit', function(event) {
+    event.preventDefault(); //Stopping Submitting
+    //event.stopPropagation();
+    //event.stopImmediatePropagation();
+    var data = $(this).serializeArray();
+    var url = $(this).attr('action');
+    $.ajax({
+      url: url,
+      type: 'post',
+      dataType: 'json',
+      data: data
+    })
+    .done(function(response) {
+      if(response == 0) {
+        console.log("Wow You Commented!");
+      } else {
+        console.log("You did not comment!");
+      }
+    })
+    .fail(function() {
+      console.log("error");
+    });
+  });
+  return false;
+});
+
+JS;
+$this->registerJs($script);
+?>

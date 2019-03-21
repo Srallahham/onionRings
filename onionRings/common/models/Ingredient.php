@@ -18,6 +18,8 @@ class Ingredient extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $recipeIngredients;
     public static function tableName()
     {
         return 'ingredient';

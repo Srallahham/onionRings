@@ -13,7 +13,9 @@ use yii\web\UploadedFile;
 use yii\db\Expression;
 use common\models\Ingredient;
 use common\models\RecipeIngredient;
+use common\models\Comment;
 use yii\db\Query;
+use yii\web\Response;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -78,6 +80,34 @@ class RecipeController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+
+    public function actionAjaxComment()
+    {
+      $model = new Comment();
+      if(Yii::$app->request->isAjax) {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        //if( $model->isNewRecord)
+        if($model->load(Yii::$app->request->post()) && $model->save()) {
+            return [
+              /*'data' => [
+                'Success' => 'true',
+                'model' => $model,
+                'message' => 'Model has been saved.',
+              ],*/
+              'code' => 0,
+            ];
+          } else {
+            return [
+              'data' => [
+                'Success' => false,
+                'model' => null,
+                'message' => 'An error occured.',
+              ],
+              'code' => 1,
+            ];
+        }
+      }
+    }
     public function actionCreate()
     {
         $model = new Recipe();
@@ -104,7 +134,7 @@ class RecipeController extends Controller
                 $row->save();
               }
 
-                return $this->redirect(['view', 'id' => $model->recipe_id]);
+                return $this->redirect(['/Ingredient/edit', 'id' => $model->recipe_id]);
             }
         }
         return $this->render('create', [

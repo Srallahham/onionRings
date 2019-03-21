@@ -7,6 +7,8 @@ use yii\web\UploadedFile;
 use common\models\Category;
 use common\models\Member;
 use common\models\Picture;
+use common\models\Comment;
+use common\models\RecipeIngredient;
 
 /**
  * This is the model class for table "recipe".
@@ -39,7 +41,7 @@ class Recipe extends \yii\db\ActiveRecord
     public $file;
 
     // Ingredients
-    public $ingredients;
+    public $recipeIngredients;
 
     /**
      * {@inheritdoc}
@@ -201,8 +203,32 @@ class Recipe extends \yii\db\ActiveRecord
 
     public function getOwnerName($id) {
 
-      $data = Member::find($id)->one();
+      $data = Member::find()
+      ->where('id = :id', [':id' => $id])
+      ->one();
 
       return $data->username;
+    }
+
+    public function getAlbum($id) {
+
+      $data = Picture::find()
+      ->where('picture_album = :id', [':id' => $id])
+      ->all();
+      return $data;
+    }
+
+    public function getIngredients($id) {
+      $data = RecipeIngredient::find()
+      ->where('recipe_id = :id', [':id' => $id])
+      ->all();
+      return $data;
+    }
+
+    public function getRecipeComments($id) {
+      $data = Comment::find()
+      ->where('comment_recipe = :id', [':id' => $id])
+      ->all();
+      return $data;
     }
 }

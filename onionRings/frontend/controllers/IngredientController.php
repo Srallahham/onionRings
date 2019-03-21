@@ -8,6 +8,8 @@ use common\models\IngredientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\RecipeIngredient;
+use yii\base\Model;
 
 /**
  * IngredientController implements the CRUD actions for Ingredient model.
@@ -29,10 +31,28 @@ class IngredientController extends Controller
         ];
     }
 
+    public function actionEdit($id)
+    {
+        $model = new Ingredient();
+        $model->recipeIngredients = RecipeIngredient::find()
+        ->where('recipe_id = :id', [':id' => $id])
+        ->all();
+
+        if (!empty($_POST['RecipeIngredient'])) {
+          print_r($model->recipeIngredients); die();
+        }
+
+
+      return $this->render('edit', [
+        'model' => $model
+      ]);
+    }
+
     /**
      * Lists all Ingredient models.
      * @return mixed
      */
+
     public function actionIndex()
     {
         $searchModel = new IngredientSearch();

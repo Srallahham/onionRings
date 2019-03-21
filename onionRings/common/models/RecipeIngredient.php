@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Ingredient;
 
 /**
  * This is the model class for table "recipe_ingredient".
@@ -52,9 +53,9 @@ class RecipeIngredient extends \yii\db\ActiveRecord
             'recipe_ingredient_id' => 'Recipe Ingredient ID',
             'recipe_id' => 'Recipe ID',
             'ingredient_id' => 'Ingredient ID',
-            'ingredient_quantity' => 'Ingredient Quantity',
-            'ingredient_unit' => 'Ingredient Unit',
-            'ingredient_desc' => 'Ingredient Desc',
+            'ingredient_quantity' => 'Quantity',
+            'ingredient_unit' => 'Unit',
+            'ingredient_desc' => 'Description',
         ];
     }
 
@@ -80,6 +81,15 @@ class RecipeIngredient extends \yii\db\ActiveRecord
     public function getIngredientUnit()
     {
         return $this->hasOne(Unit::className(), ['unit_id' => 'ingredient_unit']);
+    }
+
+    public function getIngredientName($id)
+    {
+      $ing = new Ingredient();
+      $data =$ing->find()
+      ->where('ingredient_id = :id', [':id' => $id])
+      ->one();
+      return $data->ingredient_name;
     }
 
     /**
