@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Picture */
 
-$this->title = $model->picture_id;
+$this->title = $model->getAlbum($model->picture_album);
 $this->params['breadcrumbs'][] = ['label' => 'Pictures', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -15,25 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->picture_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->picture_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'picture_id',
-            'picture_title',
-            'picture_path',
-            'picture_album',
-        ],
-    ]) ?>
+    <div class="row">
+        <div class="thumbnail">
+          <img src="<?=Yii::getAlias('@web') . '/' . $model->picture_path ?>"
+            class="figure-img img-fluid img-rounded" width="100%"/>
+          <div class="caption"> <?= $model->picture_album ?> </div>
+        </div>
 
 </div>

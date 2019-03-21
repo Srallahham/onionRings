@@ -51,9 +51,9 @@ $ingredients = $model->getIngredients($model->recipe_id);
                 $album = $model->getAlbum($model->recipe_album);
                 foreach($album as $picture) {
               ?>
-              <div class="col-md-4">
+              <div class="col-md-2">
                   <div class="thumbnail">
-                      <a href="<?= Url::toRoute(['recipe/view', 'id' => $model->recipe_id]) ?>">
+                      <a href="<?= Yii::getAlias('@web') . '/' . $picture->picture_path ?>">
                           <img src="<?= Yii::getAlias('@web') . '/' . $picture->picture_path ?>"
                                class="figure-img img-fluid img-rounded"/>
                       </a>
@@ -61,16 +61,16 @@ $ingredients = $model->getIngredients($model->recipe_id);
               </div>
               <?php } ?>
             </div>
-          <?php foreach($ingredients as $ingredient) { ?>
-            <div class="row">
-              <div class="col-md-4">
-                <div>
+            <div class="row panel panel-body rounded">
+              <?php foreach($ingredients as $ingredient) { ?>
+                <div class="col-md-4">
+                  <div>
                     <?= RecipeIngredient::getIngredientName($ingredient->ingredient_id) ?>
+                  </div>
                 </div>
-              </div>
+              <?php } ?>
             </div>
-          <?php } ?>
-        <div class="row">
+        <div class="row panel panel-body rounded">
           <div class="col-md-4">
             <div>
                 <?= $model->recipe_preparation ?>

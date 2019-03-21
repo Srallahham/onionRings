@@ -218,10 +218,8 @@ class Recipe extends \yii\db\ActiveRecord
       return $data;
     }
 
-    public function getIngredients($id) {
-      $data = RecipeIngredient::find()
-      ->where('recipe_id = :id', [':id' => $id])
-      ->all();
+    public function getIngredients() {
+      $data = Ingredient::find()->all();
       return $data;
     }
 

@@ -63,6 +63,14 @@ class Picture extends \yii\db\ActiveRecord
         return $this->hasOne(Album::className(), ['album_id' => 'picture_album']);
     }
 
+    public function getAlbum($id)
+    {
+      $data = Album::find()
+      ->where('album_id = :id', [':id' => $id])
+      ->one();
+      return $data->album_name;
+    }
+
     /**
      * {@inheritdoc}
      * @return PictureQuery the active query used by this AR class.

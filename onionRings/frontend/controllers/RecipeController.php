@@ -16,6 +16,7 @@ use common\models\RecipeIngredient;
 use common\models\Comment;
 use yii\db\Query;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -28,6 +29,16 @@ class RecipeController extends Controller
     public function behaviors()
     {
         return [
+          'access' => [
+            'class' => AccessControl::className(),
+            'only' =>['create', 'update'],
+            'rules' => [
+               [
+                 'allow' => true,
+                 'roles' => ['@']
+               ]
+            ]
+          ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -134,7 +145,7 @@ class RecipeController extends Controller
                 $row->save();
               }
 
-                return $this->redirect(['/Ingredient/edit', 'id' => $model->recipe_id]);
+                return $this->redirect(['view', 'id' => $model->recipe_id]);
             }
         }
         return $this->render('create', [
