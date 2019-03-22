@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "admin".
  *
  * @property int $id
- * @property string $user_name
+ * @property string $username
  * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
@@ -34,9 +34,9 @@ class Admin extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_name', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'status', 'role', 'created_at', 'updated_at'], 'required'],
+            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email', 'status', 'role', 'created_at', 'updated_at'], 'required'],
             [['status', 'role', 'created_at', 'updated_at'], 'integer'],
-            [['user_name', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
+            [['username', 'password_hash', 'password_reset_token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
             [['email'], 'string', 'max' => 100],
         ];
@@ -49,7 +49,7 @@ class Admin extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_name' => 'User Name',
+            'username' => 'User Name',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',

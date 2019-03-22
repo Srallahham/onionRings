@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'album_id',
+            'album_name',
             'album_recipe',
 
             ['class' => 'yii\grid\ActionColumn'],

@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\AdminSearch */
+/* @var $model backend\models\userSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="admin-search">
+<div class="user-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -28,8 +28,6 @@ use yii\widgets\ActiveForm;
     <?php // echo $form->field($model, 'email') ?>
 
     <?php // echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'role') ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
 

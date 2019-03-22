@@ -18,6 +18,7 @@ class AlbumSearch extends Album
     {
         return [
             [['album_id', 'album_recipe'], 'integer'],
+            [['album_name'], 'string'],
         ];
     }
 
@@ -58,6 +59,7 @@ class AlbumSearch extends Album
         // grid filtering conditions
         $query->andFilterWhere([
             'album_id' => $this->album_id,
+            'album_name' => $this->album_name,
             'album_recipe' => $this->album_recipe,
         ]);
 

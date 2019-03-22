@@ -58,24 +58,6 @@ class MemberController extends Controller
     }
 
     /**
-     * Creates a new Member model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Member();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Updates an existing Member model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id

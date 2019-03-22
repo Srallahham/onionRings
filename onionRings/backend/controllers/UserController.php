@@ -3,19 +3,22 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Recipe;
-use common\models\RecipeSearch;
+use backend\models\user;
+use backend\models\userSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use backend\models\CreateUserForm;
+use yii\web\ForbiddenHttpException;
+
 /**
- * RecipeController implements the CRUD actions for Recipe model.
+ * UserController implements the CRUD actions for user model.
  */
-class RecipeController extends Controller
+class UserController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
@@ -30,12 +33,12 @@ class RecipeController extends Controller
     }
 
     /**
-     * Lists all Recipe models.
+     * Lists all user models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new RecipeSearch();
+        $searchModel = new userSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +48,7 @@ class RecipeController extends Controller
     }
 
     /**
-     * Displays a single Recipe model.
+     * Displays a single user model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,7 +61,26 @@ class RecipeController extends Controller
     }
 
     /**
-     * Updates an existing Recipe model.
+     * Creates a new user model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+            $model = new CreateUserForm();
+            if ($model->load(Yii::$app->request->post())) {
+                $user = $model->signup();
+                return $this->render('/admin/index');
+            }
+
+            return $this->render('/user/create', [
+                'model' => $model,
+            ]);
+
+    }
+
+    /**
+     * Updates an existing user model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -66,19 +88,24 @@ class RecipeController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if(yii::$app->user->can('create-user')){
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->recipe_id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }else{
+            throw new ForbiddenHttpException('The door is lucked!!....You do not have the permission!');
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
     /**
-     * Deletes an existing Recipe model.
+     * Deletes an existing user model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -86,24 +113,29 @@ class RecipeController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if(yii::$app->user->can('delete-user')){
+            $this->findModel($id)->delete();
+            return $this->redirect(['index']);
+        }else{
+            throw new ForbiddenHttpException('The door is lucked!!....You do not have the permission!');
+        }
 
-        return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Recipe model based on its primary key value.
+     * Finds the user model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Recipe the loaded model
+     * @return user the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Recipe::findOne($id)) !== null) {
+        if (($model = user::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

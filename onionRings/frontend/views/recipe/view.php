@@ -95,22 +95,8 @@ $ingredients = $model->getIngredients($model->recipe_id);
           </div>
 
         <?php } ?>
-        <?php
-          $form = ActiveForm::begin([
-            'action' => ['ajax-comment'],
-            'options' => [
-              'class' => 'comment-form'
-            ]
-          ]);
-        ?>
-            <?= $form->field($comment, 'comment')->label(false); ?>
-            <?= $form->field($comment, 'comment_owner')->hiddenInput(['value'=>$model->recipe_owner])->label(false); ?>
-            <?= $form->field($comment, 'comment_recipe')->hiddenInput(['value'=>$model->recipe_id])->label(false); ?>
-
-            <?= Html::SubmitButton("Comment", ['class' => "btn"]); ?>
-        <?php ActiveForm::end(); ?>
-
 </div>
+
 
 <?php $script = <<< JS
 
