@@ -11,12 +11,13 @@ use yii\filters\VerbFilter;
 use common\models\Picture;
 use yii\web\UploadedFile;
 use yii\db\Expression;
-use common\models\Ingredient;
+use common\models\Model;
 use common\models\RecipeIngredient;
 use common\models\Comment;
 use yii\db\Query;
 use yii\web\Response;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -92,39 +93,29 @@ class RecipeController extends Controller
      * @return mixed
      */
 
-    public function actionAjaxComment()
+    public function actionComment($id)
     {
-      $model = new Comment();
-      if(Yii::$app->request->isAjax) {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        //if( $model->isNewRecord)
-        if($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-              /*'data' => [
-                'Success' => 'true',
-                'model' => $model,
-                'message' => 'Model has been saved.',
-              ],*/
-              'code' => 0,
-            ];
-          } else {
-            return [
-              'data' => [
-                'Success' => false,
-                'model' => null,
-                'message' => 'An error occured.',
-              ],
-              'code' => 1,
-            ];
+        $model = new Comment();
+        if ($model->load(Yii::$app->request->post())) {
+            //return $this->redirect(['view', 'id' => $model->comment_recipe]);
+            if($model->save())
+              echo 1;
+            else
+              echo 0;
         }
-      }
+
+        return $this->renderAjax('comment', [
+            'model' => $model,
+            'recipe_id' => $id,
+        ]);
+
     }
     public function actionCreate()
     {
         $model = new Recipe();
         $model->scenario = 'create';
 
-        $data = Ingredient::find()->all();
+        $modelsIngredient = [new RecipeIngredient];
 
         if ($model->load(Yii::$app->request->post())) {
 
@@ -132,27 +123,49 @@ class RecipeController extends Controller
             $model->file = UploadedFile::getInstance($model, 'file');
             $model->recipe_owner = (yii::$app->user->isGuest)? 1 : yii::$app->user->identity->getId();
             $model->recipe_date = new Expression('now()');
+
             if ($model->upload() && $model->save(false)) {
 
-              $ingredientList = $_POST['Recipe']['ingredients'];
-              foreach ($ingredientList as $ingredient) {
+            $oldIDs = ArrayHelper::map($modelsIngredient, 'recipe_ingredient_id', 'recipe_ingredient_id');
+            $modelsIngredient = Model::createMultiple(RecipeIngredient::classname(), $modelsIngredient);
+            Model::loadMultiple($modelsIngredient, Yii::$app->request->post());
+            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelsIngredient, 'recipe_ingredient_id', 'recipe_ingredient_id')));
 
-                $row = new RecipeIngredient();
+            // validate all models
+            $valid = true; //$model->validate();
+            $valid = Model::validateMultiple($modelsIngredient) && $valid;
 
-                $row->recipe_id = $model->recipe_id;
-                $row->ingredient_id = $ingredient;
-                $row->ingredient_unit = 5;
-                $row->save();
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($flag = $model->save(false)) {
+                        if (! empty($deletedIDs)) {
+                            RecipeIngredient::deleteAll(['recipe_ingredient_id' => $deletedIDs]);
+                        }
+                        foreach ($modelsIngredient as $modelIngredient) {
+                            $modelIngredient->recipe_id = $model->recipe_id;
+                            if (! ($flag = $modelIngredient->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['view', 'id' => $model->recipe_id]);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
               }
-
-                return $this->redirect(['view', 'id' => $model->recipe_id]);
             }
         }
         return $this->render('create', [
             'model' => $model,
-            'data' => $data
+            'modelsIngredient' => (empty($modelsIngredient)) ? [new RecipeIngredient] : $modelsIngredient,
+
         ]);
-    }
+  }
 
     /**
      * Updates an existing Recipe model.
