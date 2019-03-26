@@ -231,4 +231,11 @@ class Recipe extends \yii\db\ActiveRecord
       ->all();
       return $data;
     }
+
+    public function getRecipeLikes($id) {
+      $data = Like::find()
+      ->where('like_recipe = :id', [':id' => $id])
+      ->count();
+      return $data;
+  }
 }

@@ -114,16 +114,3 @@ use common\wbraganca\src\DynamicFormWidget;
 
     <?php ActiveForm::end(); ?>
 </div>
-
-<?php $script = <<< JS
-
-jQuery(document).ready(function($){
-
-  //$(document).find('div#')
-
-  //window.location.reload(true);
-});
-
-JS;
-$this->registerJs($script);
-?>

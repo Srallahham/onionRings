@@ -32,6 +32,7 @@ class Like extends \yii\db\ActiveRecord
         return [
             [['like_owner', 'like_recipe'], 'required'],
             [['like_owner', 'like_recipe'], 'integer'],
+            [['like_owner', 'like_recipe'], 'unique', 'targetAttribute' => ['like_owner', 'like_recipe']],
             [['like_recipe'], 'exist', 'skipOnError' => true, 'targetClass' => Recipe::className(), 'targetAttribute' => ['like_recipe' => 'recipe_id']],
             [['like_owner'], 'exist', 'skipOnError' => true, 'targetClass' => Member::className(), 'targetAttribute' => ['like_owner' => 'id']],
         ];
@@ -63,6 +64,17 @@ class Like extends \yii\db\ActiveRecord
     public function getLikeOwner()
     {
         return $this->hasOne(Member::className(), ['id' => 'like_owner']);
+    }
+
+    public function getId($model) {
+        $data = Like::find()
+        ->where('like_owner = :owner && like_recipe = :recipe',
+            [
+                ':owner' => $model->like_owner,
+                ':recipe' => $model->like_recipe
+            ])
+        ->one();
+        return $data->like_id;
     }
 
     /**

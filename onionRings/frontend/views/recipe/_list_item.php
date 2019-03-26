@@ -9,8 +9,12 @@ use yii\helpers\Url;
         <a href="<?= Url::toRoute(['recipe/view', 'id' => $model->recipe_id]) ?>">
             <img src="<?= Yii::getAlias('@web') . '/' . 'uploads/' . $model->recipe_picture ?>"
                  class="figure-img img-fluid img-rounded"/>
-            <div class="caption"> <?= $model->recipe_title ?>
-                , <?= $model->getCategoryName($model->recipe_category) ?> </div>
+            <div class="caption"> <?= $model->recipe_title ?>,
+                <?= $model->getCategoryName($model->recipe_category) ?>
+                <div class="btn btn-link">
+                    <?= $model->getRecipeLikes($model->recipe_id) ?> likes
+                </div>
+            </div>
         </a>
     </div>
 

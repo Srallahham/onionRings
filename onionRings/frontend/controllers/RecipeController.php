@@ -3,21 +3,26 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\models\Recipe;
-use common\models\RecipeSearch;
+use yii\helpers\ArrayHelper;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\db\Query;
+use yii\db\Expression;
+use yii\web\Response;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use common\models\Picture;
 use yii\web\UploadedFile;
-use yii\db\Expression;
+use common\models\Recipe;
+use common\models\RecipeSearch;
+use common\models\Picture;
 use common\models\Model;
 use common\models\RecipeIngredient;
 use common\models\Comment;
-use yii\db\Query;
-use yii\web\Response;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
+use common\models\Like;
+
+
+
+
 
 /**
  * RecipeController implements the CRUD actions for Recipe model.
@@ -87,21 +92,30 @@ class RecipeController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Recipe model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
+    public function actionLike()
+    {
+        $model = new Like();
+        if($model->load(Yii::$app->request->post())) {
+
+            if($model->save()) {
+                echo 1;
+            } else {
+                $id = Like::getId($model);
+                $model->find($id)->one()->delete();
+                echo $id;
+            }
+        }
+    }
 
     public function actionComment($id)
     {
         $model = new Comment();
         if ($model->load(Yii::$app->request->post())) {
-            //return $this->redirect(['view', 'id' => $model->comment_recipe]);
+
             if($model->save())
-              echo 1;
+                echo 1;
             else
-              echo 0;
+                echo 0;
         }
 
         return $this->renderAjax('comment', [
