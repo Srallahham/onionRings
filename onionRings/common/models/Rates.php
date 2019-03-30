@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "rates".
  *
  * @property int $rate_id
+ * @property int $rate
  * @property int $rate_owner
  * @property int $rate_recipe
  *
@@ -30,8 +31,9 @@ class Rates extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['rate_owner', 'rate_recipe'], 'required'],
-            [['rate_owner', 'rate_recipe'], 'integer'],
+            [['rate', 'rate_owner', 'rate_recipe'], 'required'],
+            [['rate', 'rate_owner', 'rate_recipe'], 'integer'],
+            [['rate_owner', 'rate_recipe'], 'unique', 'targetAttribute' => ['rate_owner', 'rate_recipe']],
             [['rate_recipe'], 'exist', 'skipOnError' => true, 'targetClass' => Recipe::className(), 'targetAttribute' => ['rate_recipe' => 'recipe_id']],
             [['rate_owner'], 'exist', 'skipOnError' => true, 'targetClass' => Member::className(), 'targetAttribute' => ['rate_owner' => 'id']],
         ];
@@ -44,6 +46,7 @@ class Rates extends \yii\db\ActiveRecord
     {
         return [
             'rate_id' => 'Rate ID',
+            'rate' => 'Rate',
             'rate_owner' => 'Rate Owner',
             'rate_recipe' => 'Rate Recipe',
         ];
@@ -63,6 +66,17 @@ class Rates extends \yii\db\ActiveRecord
     public function getRateOwner()
     {
         return $this->hasOne(Member::className(), ['id' => 'rate_owner']);
+    }
+
+    public function getId($model) {
+        $data = Rates::find()
+        ->where('rate_owner = :owner && rate_recipe = :recipe',
+            [
+                ':owner' => $model->rate_owner,
+                ':recipe' => $model->rate_recipe
+            ])
+        ->one();
+        return $data->rate_id;
     }
 
     /**

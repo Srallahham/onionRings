@@ -77,6 +77,17 @@ class Like extends \yii\db\ActiveRecord
         return $data->like_id;
     }
 
+    public function ifLike($recipe, $owner) {
+        $data = Like::find()
+        ->where('like_owner = :owner && like_recipe = :recipe',
+            [
+                ':owner' => $owner,
+                ':recipe' => $recipe
+            ])
+        ->one();
+        return ($data != null);
+    }
+
     /**
      * {@inheritdoc}
      * @return LikeQuery the active query used by this AR class.

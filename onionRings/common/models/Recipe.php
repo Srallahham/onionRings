@@ -237,5 +237,12 @@ class Recipe extends \yii\db\ActiveRecord
       ->where('like_recipe = :id', [':id' => $id])
       ->count();
       return $data;
-  }
+    }
+
+    public function getRecipeRates($id) {
+      $data = Rates::find()
+      ->where('rate_recipe = :id', [':id' => $id])
+      ->average('rate');
+      return $data;
+    }
 }

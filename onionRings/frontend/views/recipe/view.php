@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use common\models\Comment;
 use common\models\RecipeIngredient;
 use common\models\Like;
+use common\models\Rates;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 
@@ -20,9 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $comment = new Comment();
 $likeModel = new Like();
+$rate = new Rates();
 $comments = $model->getRecipeComments($model->recipe_id);
 $ingredients = $model->getIngredients($model->recipe_id);
 $likes = $model->getRecipeLikes($model->recipe_id);
+$ifLike = $likeModel->ifLike($model->recipe_id, yii::$app->user->identity->getId());
 ?>
 <div class="recipe-view">
 
@@ -109,25 +112,41 @@ $likes = $model->getRecipeLikes($model->recipe_id);
         <?= $form->field($likeModel, 'like_recipe')->hiddenInput(['value'=>$model->recipe_id])->label(false); ?>
         <?= $form->field($likeModel, 'like_owner')->hiddenInput(['value'=>yii::$app->user->identity->getId()])->label(false); ?>
         <div class="col-md-1">
-            <?= Html::submitButton('Like', ['class' => 'btn btn-success']) ?>
+            <?php Pjax::begin(['id' => 'likeStyle']); ?>
+                <?php $ifLike = ($ifLike)? 'btn btn-success':'btn btn'; ?>
+                <?= Html::submitButton('', ['class' => 'glyphicon glyphicon-thumbs-up ' . $ifLike]) ?>
+            <?php Pjax::end(); ?>
         </div>
         <?php ActiveForm::end(); ?>
 
         <div class="col-md-1">
         <!-- Comment Section :) -->
             <?= Html::button('Comment', ['value' => Url::to('comment?id=') . $model->recipe_id,
-                'class' => 'btn btn success', 'id' => 'modalButton']) ?>
+                'class' => 'btn btn', 'id' => 'modalButton']) ?>
         </div>
 
-        <div class="col-md-1">
+
         <!-- Rate Section :) -->
-            <div class="btn btn success">
-                <span class="glyphicon glyphicon-star checked"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
-                <span class="glyphicon glyphicon-star"></span>
+            <?php $form = ActiveForm::begin([
+                'id' => $rate->formName(),
+                'action' => 'rate',
+            ]); ?>
+
+            <?= $form->field($rate, 'rate_recipe')->hiddenInput(['value'=>$model->recipe_id])->label(false); ?>
+            <?= $form->field($rate, 'rate_owner')->hiddenInput(['value'=>yii::$app->user->identity->getId()])->label(false); ?>
+
+            <?php ActiveForm::end(); ?>
+
+        <div class="col-md-1">
+
+            <div class="btn btn-success">
+                <span id="1" class="glyphicon glyphicon-star checked"></span>
+                <span id="2" class="glyphicon glyphicon-star"></span>
+                <span id="3" class="glyphicon glyphicon-star"></span>
+                <span id="4" class="glyphicon glyphicon-star"></span>
+                <span id="5" class="glyphicon glyphicon-star"></span>
             </div>
+
         </div>
 
     </div>
@@ -151,7 +170,6 @@ $likes = $model->getRecipeLikes($model->recipe_id);
     <?php } ?>
 
     <?php Pjax::end(); ?>
-
 
 
     <?php
@@ -182,6 +200,7 @@ $('form#{$likeModel->formName()}').on('beforeSubmit', function(e)
    .done(function(result){
       $(document).find('#modal').modal('hide');
       console.log(result);
+      console.log(\$form.serialize());
       if(result == 1) {
           console.log("Like");
       }
@@ -189,6 +208,43 @@ $('form#{$likeModel->formName()}').on('beforeSubmit', function(e)
           console.log("Dislike");
       }
       $.pjax.reload({container:'#likes'});
+      $.pjax.reload({container:'#likeStyle'});
+   }).fail(function()
+   {
+      console.log("Server error :(");
+   });
+   return false;
+});
+
+var id;
+
+$('span').on('click', function(e){
+    $(this).parent().children().removeClass("checked");
+    id = parseInt($(this).attr("id"));
+    for(var i = 1; i <= id; i++) {
+        $('span#'+ i).addClass("checked");
+    }
+    var \$form = $('form#{$rate->formName()}');
+    \$form.submit();
+
+});
+
+$('form#{$rate->formName()}').on('beforeSubmit', function(e) {
+
+    var \$form = $(this);
+    var \$data = \$form.serialize() + "&Rates%5Brate%5D=" + id;
+    $.post(
+        \$form.attr("action"),
+        \$data
+    )
+    .done(function(result){
+        console.log(result);
+       if(result == 1) {
+           console.log("Rated");
+       }
+       else {
+           console.log("Updated");
+       }
    }).fail(function()
    {
       console.log("Server error :(");
@@ -200,7 +256,7 @@ JS;
 $this->registerJs($script);
 ?>
 
-<?php $style= <<< CSS
+<?php $style = <<< CSS
 
 .checked{
     color: orange;

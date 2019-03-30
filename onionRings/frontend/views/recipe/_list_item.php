@@ -8,14 +8,19 @@ use yii\helpers\Url;
     <div class="thumbnail">
         <a href="<?= Url::toRoute(['recipe/view', 'id' => $model->recipe_id]) ?>">
             <img src="<?= Yii::getAlias('@web') . '/' . 'uploads/' . $model->recipe_picture ?>"
-                 class="figure-img img-fluid img-rounded"/>
-            <div class="caption"> <?= $model->recipe_title ?>,
-                <?= $model->getCategoryName($model->recipe_category) ?>
-                <div class="btn btn-link">
-                    <?= $model->getRecipeLikes($model->recipe_id) ?> likes
-                </div>
-            </div>
+                 class="figure-img img-fluid"/>
         </a>
+        <div class="caption">
+            <?= $model->recipe_title ?>,
+            <?= $model->getCategoryName($model->recipe_category) ?>
+            <div class="btn btn">
+                <?= $model->getRecipeLikes($model->recipe_id) ?>
+                <div class="glyphicon glyphicon-thumbs-up"></div>
+            </div>
+            <div class="btn btn">
+                <?= intval($model->getRecipeRates($model->recipe_id)) ?>
+                <div class="glyphicon glyphicon-star"></div>
+            </div>
+        </div>
     </div>
-
 </div>

@@ -19,7 +19,7 @@ use common\models\Model;
 use common\models\RecipeIngredient;
 use common\models\Comment;
 use common\models\Like;
-
+use common\models\Rates;
 
 
 
@@ -103,6 +103,22 @@ class RecipeController extends Controller
                 $id = Like::getId($model);
                 $model->find($id)->one()->delete();
                 echo $id;
+            }
+        }
+    }
+
+    public function actionRate()
+    {
+        $model = new Rates();
+        if($model->load(Yii::$app->request->post())) {
+            if($model->save()) {
+                echo 1;
+            } else {
+                $id = Rates::getId($model);
+                $new = $model->find($id)->one();
+                $new->rate = $model->rate;
+                $new->save();
+                echo $new->rate;
             }
         }
     }
